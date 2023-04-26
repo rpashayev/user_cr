@@ -22,7 +22,17 @@ class User:
             users.append(cls(user))
         
         return users
-        
+
+    @classmethod
+    def show_one_user(cls, user_id):
+        query = '''
+                SELECT *
+                FROM users
+                WHERE id = %(id)s;
+        '''
+        result = connectToMySQL(cls.DB).query_db(query, user_id)
+        return cls(result[0])
+
     @classmethod
     def add_user(cls, data):
         query = '''
@@ -38,5 +48,13 @@ class User:
                 FROM users 
                 WHERE id=( %(id)s );
         '''
-        id = {'id': user_id}
-        return connectToMySQL(cls.DB).query_db(query, id)
+        return connectToMySQL(cls.DB).query_db(query, user_id)
+    
+    @classmethod
+    def edit_one_user(cls, data):
+        query = '''
+                UPDATE users
+                SET first_name =%(fname)s,  last_name =%(lname)s, email =%(email)s
+                WHERE id=%(id)s;
+        '''
+        return connectToMySQL(cls.DB).query_db(query, data)
