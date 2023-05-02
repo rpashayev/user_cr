@@ -1,6 +1,11 @@
 from flask_app import app
-from flask import render_template, redirect, request
+from flask import render_template, redirect, request, flash, session
 from flask_app.models.user import User
+
+
+@app.route('/')
+def index():
+    return redirect('/users')
 
 @app.route('/users')
 def show_users():
@@ -18,6 +23,11 @@ def add_new_user():
         'lname': request.form['lname'],
         'email': request.form['email'],
     }
+    if not User.validate_user(request.form):
+        first_name = request.form['fname']
+        lname =request.form['lname']
+        email =request.form['email']
+        return render_template('create.html', fname=first_name, lname=lname, email=email)
     User.add_user(data)
     return redirect('/users')
 
